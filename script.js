@@ -1,19 +1,25 @@
+let guessCount = 0;
+const maxGuesses = 5;
+
 function submitGuess() {
   const guess = document.getElementById("guessInput").value.trim().toLowerCase();
   const result = document.getElementById("result");
+  const guessesLeft = document.getElementById("guessesLeft");
+  const submitButton = document.querySelector("button");
 
   // Define the ideal answer and acceptable variations
-  const idealAnswer = "dog barking"; // The "official" answer
+  const idealAnswer = "dog barking";
   const acceptableAnswers = [
-    "dog barking",  // Exact match
-    "barking",      // Key component
-    "dog",          // Partial match
-    "bark",         // Short form
-    "puppy barking" // Synonym/variation
-    // Add more as needed
+    "dog barking",
+    "barking",
+    "dog",
+    "bark",
+    "puppy barking"
   ];
 
-  result.classList.remove("correct", "wrong"); // Clear previous classes
+  // Increment guess count
+  guessCount++;
+  const remaining = maxGuesses - guessCount;
 
   // Check for exact or close match
   let isCorrect = false;
@@ -24,17 +30,24 @@ function submitGuess() {
     }
   }
 
+  // Update UI
+  result.classList.remove("correct", "wrong");
   if (isCorrect) {
-    if(guess === idealAnswer) {
-      result.textContent = `Perfect guess! That is exactly right!`;
-    } else {
-      result.textContent = `Good guess! It’s ${idealAnswer}.`;
-    }
+    result.textContent = `Good guess! It’s ${idealAnswer}.`;
     result.classList.add("correct");
-  } else {
-    result.textContent = `Nope! It’s ${idealAnswer}, not "${guess}".`;
+    guessesLeft.textContent = `You got it in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
+    submitButton.disabled = true; // End game
+  } else if (remaining > 0) {
+    result.textContent = `Nope, not "${guess}". Try again!`;
     result.classList.add("wrong");
+    guessesLeft.textContent = `Guesses remaining: ${remaining}`;
+  } else {
+    result.textContent = `Game over! It was ${idealAnswer}.`;
+    result.classList.add("wrong");
+    guessesLeft.textContent = "No guesses left.";
+    submitButton.disabled = true; // End game
   }
+
   document.getElementById("guessInput").value = ""; // Clear input
 }
 

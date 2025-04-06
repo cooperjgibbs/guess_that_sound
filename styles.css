@@ -12,7 +12,7 @@
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, #e0eafc, #cfdef3);
-    padding: 10px; /* Prevent edge-to-edge content on small screens */
+    padding: 10px;
   }
   
   /* Container */
@@ -23,22 +23,28 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 100%;
-    max-width: 500px; /* Limits width on larger screens */
+    max-width: 500px;
   }
   
   /* Heading */
   h1 {
-    font-size: clamp(1.5rem, 6vw, 2.5rem); /* Scales between 1.5rem and 2.5rem */
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
     color: #2c3e50;
     margin-bottom: 1rem;
     font-weight: 600;
   }
   
-  /* Instruction text */
+  /* Instruction text and guesses counter */
   p {
     color: #7f8c8d;
     margin-bottom: 1.5rem;
-    font-size: clamp(0.9rem, 3vw, 1.1rem); /* Responsive font size */
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+  }
+  
+  #guessesLeft {
+    color: #2c3e50;
+    font-weight: 500;
+    margin-bottom: 1rem;
   }
   
   /* Audio player */
@@ -46,13 +52,13 @@
     width: 100%;
     margin-bottom: 1.5rem;
     outline: none;
-    max-width: 100%; /* Ensures it doesn’t overflow */
+    max-width: 100%;
   }
   
   /* Form styling */
   form {
     display: flex;
-    flex-direction: column; /* Stack vertically by default for phones */
+    flex-direction: column;
     gap: 10px;
     justify-content: center;
     align-items: center;
@@ -65,7 +71,7 @@
     border: 2px solid #dfe6e9;
     border-radius: 25px;
     width: 100%;
-    max-width: 300px; /* Limits width on larger screens */
+    max-width: 300px;
     transition: border-color 0.3s ease;
   }
   
@@ -86,7 +92,7 @@
     transition: background 0.3s ease, transform 0.2s ease;
     font-weight: 500;
     width: 100%;
-    max-width: 200px; /* Limits width on larger screens */
+    max-width: 200px;
   }
   
   button:hover {
@@ -113,18 +119,25 @@
     color: #e74c3c;
   }
   
+  /* Disabled state for game over */
+  button:disabled {
+    background: #b0bec5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
   /* Media query for larger screens */
   @media (min-width: 600px) {
     .container {
       padding: 2rem;
     }
     form {
-      flex-direction: row; /* Horizontal layout on wider screens */
+      flex-direction: row;
     }
     input {
       width: 70%;
     }
     button {
-      width: auto; /* Button shrinks back to content size */
+      width: auto;
     }
   }
