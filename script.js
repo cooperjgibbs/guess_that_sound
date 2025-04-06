@@ -23,10 +23,32 @@ function submitGuess() {
 
   // Check for exact or close match
   let isCorrect = false;
+
+  // Split guess into words for more precise matching
+  const guessWords = guess.split(/\s+/); // Split on whitespace
+
+  // Check each acceptable answer
   for (let answer of acceptableAnswers) {
-    if (guess === answer || guess.includes(answer) || answer.includes(guess)) {
+    const answerWords = answer.split(/\s+/);
+    
+    // Exact match
+    if (guess === answer) {
       isCorrect = true;
       break;
+    }
+    
+    // Check if guess contains the full answer (for multi-word answers)
+    if (guess.includes(answer) && answer.length >= 3) { // Minimum length to avoid "g"
+      isCorrect = true;
+      break;
+    }
+    
+    // Check if any guess word matches an acceptable answer word exactly
+    for (let guessWord of guessWords) {
+      if (answerWords.includes(guessWord) && guessWord.length >= 3) {
+        isCorrect = true;
+        break;
+      }
     }
   }
 
