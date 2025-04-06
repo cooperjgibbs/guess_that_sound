@@ -25,7 +25,11 @@ function submitGuess() {
   }
 
   if (isCorrect) {
-    result.textContent = `Good guess! It’s ${idealAnswer}.`;
+    if(guess === idealAnswer) {
+      result.textContent = `Perfect guess! That is exactly right!`;
+    } else {
+      result.textContent = `Good guess! It’s ${idealAnswer}.`;
+    }
     result.classList.add("correct");
   } else {
     result.textContent = `Nope! It’s ${idealAnswer}, not "${guess}".`;
