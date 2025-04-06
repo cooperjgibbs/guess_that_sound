@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess That Sound</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Guess That Sound</h1>
+    <p>Listen to the clip and guess what it is!</p>
+    <audio id="soundClip" controls>
+      <source src="sounds/day_1.mp3" type="audio/mp3">
+      Your browser doesn’t support audio.
+    </audio>
+    <form id="guessForm" onsubmit="submitGuess(); return false;">
+      <input type="text" id="guessInput" placeholder="What’s your guess?" autocomplete="off">
+      <button type="submit">Submit</button>
+    </form>
+    <p id="result"></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
