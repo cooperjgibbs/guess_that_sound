@@ -1,14 +1,34 @@
 function submitGuess() {
   const guess = document.getElementById("guessInput").value.trim().toLowerCase();
   const result = document.getElementById("result");
-  const correctAnswer = "dog barking"; // Replace with your actual answer
+
+  // Define the ideal answer and acceptable variations
+  const idealAnswer = "dog barking"; // The "official" answer
+  const acceptableAnswers = [
+    "dog barking",  // Exact match
+    "barking",      // Key component
+    "dog",          // Partial match
+    "bark",         // Short form
+    "puppy barking" // Synonym/variation
+    // Add more as needed
+  ];
 
   result.classList.remove("correct", "wrong"); // Clear previous classes
-  if (guess === correctAnswer) {
-    result.textContent = `Nice one! It’s ${correctAnswer}!`;
+
+  // Check for exact or close match
+  let isCorrect = false;
+  for (let answer of acceptableAnswers) {
+    if (guess === answer || guess.includes(answer) || answer.includes(guess)) {
+      isCorrect = true;
+      break;
+    }
+  }
+
+  if (isCorrect) {
+    result.textContent = `Good guess! It’s ${idealAnswer}.`;
     result.classList.add("correct");
   } else {
-    result.textContent = `Nope! It’s ${correctAnswer}, not "${guess}".`;
+    result.textContent = `Nope! It’s ${idealAnswer}, not "${guess}".`;
     result.classList.add("wrong");
   }
   document.getElementById("guessInput").value = ""; // Clear input
