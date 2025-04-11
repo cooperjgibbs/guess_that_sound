@@ -9,11 +9,15 @@
 </head>
 <body>
   <div class="container">
+    <button id="dayButton" class="day-button">Day 1</button>
+    <div id="dayDropdown" class="dropdown" style="display: none;">
+      <div id="dayList"></div>
+    </div>
     <h1>Guess That Sound</h1>
     <p>Listen to the clip and guess what it is!</p>
     <p id="guessesLeft">Guesses remaining: 5</p>
     <audio id="soundClip" controls>
-      <source src="sounds/day_1.mp3" type="audio/mp3">
+      <!-- Source set dynamically by JS -->
       Your browser doesn’t support audio.
     </audio>
     <form id="guessForm" onsubmit="submitGuess(); return false;">

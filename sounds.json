@@ -1,4 +1,12 @@
-{
-    "2025-04-06": {"file": "sounds/day1.wav", "answer": "dog barking"},
-    "2025-04-07": {"file": "sounds/day2.mp3", "answer": "rain falling"}
-  }
+[
+    {
+      "file": "sounds/day1.mp3",
+      "answer": "dog barking",
+      "acceptable": ["dog barking", "barking", "dog", "bark", "puppy", "woof"]
+    },
+    {
+      "file": "sounds/day2.mp3",
+      "answer": "rain falling",
+      "acceptable": ["rain falling", "rain", "falling rain", "raindrops", "drizzle"]
+    }
+  ]
