@@ -9,13 +9,11 @@ function submitGuess() {
   const guess = document.getElementById("guessInput").value.trim().toLowerCase();
   const result = document.getElementById("result");
   const guessesLeft = document.getElementById("guessesLeft");
-  const submitButton = document.querySelector("button");
+  const submitButton = document.querySelector("button[type='submit']");
 
-  // Increment guess count
   guessCount++;
   const remaining = maxGuesses - guessCount;
 
-  // Check for exact or close match
   let isCorrect = false;
   const guessWords = guess.split(/\s+/);
   for (let answer of acceptableAnswers) {
@@ -32,7 +30,6 @@ function submitGuess() {
     }
   }
 
-  // Update UI
   result.classList.remove("correct", "wrong");
   if (isCorrect) {
     result.textContent = `Good guess! It’s ${idealAnswer}.`;
@@ -55,29 +52,20 @@ function submitGuess() {
   document.getElementById("guessInput").value = "";
 }
 
-// Green flash effect
 function triggerGreenFlash() {
   document.body.classList.add("green-flash");
-  setTimeout(() => {
-    document.body.classList.remove("green-flash");
-  }, 1000);
+  setTimeout(() => document.body.classList.remove("green-flash"), 1000);
 }
 
-// Confetti effect
 function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
 
-// Limit audio to 5 seconds
 const audio = document.getElementById("soundClip");
 audio.addEventListener("timeupdate", () => {
   if (audio.currentTime > 5) {
@@ -86,7 +74,6 @@ audio.addEventListener("timeupdate", () => {
   }
 });
 
-// Reset game state
 function resetGame() {
   guessCount = 0;
   document.getElementById("guessesLeft").textContent = `Guesses remaining: ${maxGuesses}`;
@@ -96,31 +83,30 @@ function resetGame() {
   document.getElementById("guessInput").value = "";
 }
 
-// Load sound for a specific day
 function loadSound(dayIndex) {
   const sound = soundsData[dayIndex];
   if (!sound) return;
 
-  // Update audio
-  audio.innerHTML = ""; // Clear previous source
+  audio.innerHTML = "";
   const source = document.createElement("source");
   source.src = sound.file;
   source.type = "audio/mp3";
   audio.appendChild(source);
   audio.load();
 
-  // Update answers
   idealAnswer = sound.answer;
   acceptableAnswers = sound.acceptable;
 
-  // Update UI
   currentDayIndex = dayIndex;
   document.getElementById("dayButton").textContent = `Day ${dayIndex + 1}`;
   resetGame();
 }
 
-// Load daily sound and setup dropdown
 function loadDailySound() {
+  const dayButton = document.getElementById("dayButton");
+  const dayDropdown = document.getElementById("dayDropdown");
+  const dayList = document.getElementById("dayList");
+
   fetch("sounds.json")
     .then(response => response.json())
     .then(data => {
@@ -136,21 +122,20 @@ function loadDailySound() {
       loadSound(currentDayIndex);
 
       // Populate dropdown
-      const dayList = document.getElementById("dayList");
+      dayList.innerHTML = ""; // Clear existing items
       data.forEach((sound, index) => {
         const dayItem = document.createElement("div");
         dayItem.textContent = `Day ${index + 1}`;
         dayItem.onclick = () => {
           loadSound(index);
-          document.getElementById("dayDropdown").style.display = "none";
+          dayDropdown.style.display = "none";
         };
         dayList.appendChild(dayItem);
       });
 
       // Toggle dropdown
-      document.getElementById("dayButton").onclick = () => {
-        const dropdown = document.getElementById("dayDropdown");
-        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+      dayButton.onclick = () => {
+        dayDropdown.style.display = dayDropdown.style.display === "none" ? "block" : "none";
       };
     })
     .catch(error => {
@@ -163,8 +148,9 @@ function loadDailySound() {
       source.type = "audio/mp3";
       audio.appendChild(source);
       audio.load();
+      dayButton.textContent = "Day 1";
     });
 }
 
-// Run on page load
-loadDailySound();
+// Run when DOM is fully loaded
+document.addEventListener("DOMContentLoaded", loadDailySound);
