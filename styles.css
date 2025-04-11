@@ -8,7 +8,7 @@
   body {
     font-family: 'Poppins', sans-serif;
     display: flex;
-    flex-direction: column; /* Stack header and container vertically */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -17,15 +17,15 @@
     transition: background 0.5s ease;
   }
   
-  /* Green flash effect */
   body.green-flash {
     background: #27ae60;
   }
   
   /* Header for day button */
   .header {
-    margin-bottom: 20px; /* Space between button and container */
-    position: relative; /* For dropdown positioning */
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 20; /* Ensure it’s above other elements */
   }
   
   /* Day button */
@@ -35,10 +35,11 @@
     background: #0984e3;
     color: white;
     border: none;
-    border-radius: 20px; /* Oval shape */
+    border-radius: 20px;
     cursor: pointer;
     font-weight: 500;
     transition: background 0.3s ease;
+    pointer-events: auto; /* Ensure clickable */
   }
   
   .day-button:hover {
@@ -48,16 +49,17 @@
   /* Dropdown */
   .dropdown {
     position: absolute;
-    top: 100%; /* Below the button */
+    top: 100%;
     left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
+    transform: translateX(-50%);
     background: white;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     max-height: 200px;
     overflow-y: auto;
-    z-index: 10;
-    width: 120px; /* Fixed width for consistency */
+    z-index: 20;
+    width: 120px;
+    pointer-events: auto; /* Ensure clickable */
   }
   
   .dropdown div {
@@ -80,9 +82,11 @@
     text-align: center;
     width: 100%;
     max-width: 500px;
+    position: relative;
+    z-index: 10; /* Below header */
   }
   
-  /* Heading */
+  /* Rest of CSS remains unchanged */
   h1 {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
     color: #2c3e50;
@@ -90,7 +94,6 @@
     font-weight: 600;
   }
   
-  /* Instruction text and guesses counter */
   p {
     color: #7f8c8d;
     margin-bottom: 1.5rem;
@@ -103,7 +106,6 @@
     margin-bottom: 1rem;
   }
   
-  /* Audio player */
   audio {
     width: 100%;
     margin-bottom: 1.5rem;
@@ -111,7 +113,6 @@
     max-width: 100%;
   }
   
-  /* Form styling */
   form {
     display: flex;
     flex-direction: column;
@@ -120,7 +121,6 @@
     align-items: center;
   }
   
-  /* Input */
   input {
     padding: 10px 15px;
     font-size: 1rem;
@@ -136,7 +136,6 @@
     outline: none;
   }
   
-  /* Modern button */
   button {
     padding: 10px 20px;
     font-size: 1rem;
@@ -160,7 +159,6 @@
     transform: translateY(0);
   }
   
-  /* Result text */
   #result {
     margin-top: 1.5rem;
     font-size: clamp(0.9rem, 3vw, 1.1rem);
@@ -175,14 +173,12 @@
     color: #e74c3c;
   }
   
-  /* Disabled state */
   button:disabled {
     background: #b0bec5;
     cursor: not-allowed;
     transform: none;
   }
   
-  /* Media query for larger screens */
   @media (min-width: 600px) {
     .container {
       padding: 2rem;
