@@ -35,7 +35,7 @@ function submitGuess() {
     result.textContent = `Good guess! It’s ${idealAnswer}.`;
     result.classList.add("correct");
     guessesLeft.textContent = `You got it in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
-    submitButton.disabled = true;
+    submitButton.disabled = true; // Disable submit, but day selection stays active
     triggerGreenFlash();
     triggerConfetti();
   } else if (remaining > 0) {
@@ -81,6 +81,7 @@ function resetGame() {
   document.getElementById("result").classList.remove("correct", "wrong");
   document.querySelector("button[type='submit']").disabled = false;
   document.getElementById("guessInput").value = "";
+  audio.currentTime = 0; // Reset audio to start
 }
 
 function loadSound(dayIndex) {
@@ -99,7 +100,7 @@ function loadSound(dayIndex) {
 
   currentDayIndex = dayIndex;
   document.getElementById("dayButton").textContent = `Day ${dayIndex + 1}`;
-  resetGame();
+  resetGame(); // Always reset, even after a correct answer
 }
 
 function loadDailySound() {
@@ -122,7 +123,7 @@ function loadDailySound() {
       loadSound(currentDayIndex);
 
       // Populate dropdown
-      dayList.innerHTML = ""; // Clear existing items
+      dayList.innerHTML = "";
       data.forEach((sound, index) => {
         const dayItem = document.createElement("div");
         dayItem.textContent = `Day ${index + 1}`;
@@ -133,7 +134,7 @@ function loadDailySound() {
         dayList.appendChild(dayItem);
       });
 
-      // Toggle dropdown
+      // Ensure day button toggle works independently
       dayButton.onclick = () => {
         dayDropdown.style.display = dayDropdown.style.display === "none" ? "block" : "none";
       };
@@ -152,5 +153,4 @@ function loadDailySound() {
     });
 }
 
-// Run when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", loadDailySound);
