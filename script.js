@@ -67,7 +67,7 @@ function triggerGreenFlash() {
   document.body.classList.add("green-flash");
   setTimeout(() => {
     document.body.classList.remove("green-flash");
-  }, 1000); // Flash for 1 second
+  }, 2000); // Flash for 1 second
 }
 
 // Confetti effect
