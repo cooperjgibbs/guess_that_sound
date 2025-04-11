@@ -23,27 +23,13 @@ function submitGuess() {
 
   // Check for exact or close match
   let isCorrect = false;
-
-  // Split guess into words for more precise matching
-  const guessWords = guess.split(/\s+/); // Split on whitespace
-
-  // Check each acceptable answer
+  const guessWords = guess.split(/\s+/);
   for (let answer of acceptableAnswers) {
     const answerWords = answer.split(/\s+/);
-    
-    // Exact match
-    if (guess === answer) {
+    if (guess === answer || (guess.includes(answer) && answer.length >= 3)) {
       isCorrect = true;
       break;
     }
-    
-    // Check if guess contains the full answer (for multi-word answers)
-    if (guess.includes(answer) && answer.length >= 3) { // Minimum length to avoid "g"
-      isCorrect = true;
-      break;
-    }
-    
-    // Check if any guess word matches an acceptable answer word exactly
     for (let guessWord of guessWords) {
       if (answerWords.includes(guessWord) && guessWord.length >= 3) {
         isCorrect = true;
@@ -58,7 +44,10 @@ function submitGuess() {
     result.textContent = `Good guess! It’s ${idealAnswer}.`;
     result.classList.add("correct");
     guessesLeft.textContent = `You got it in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
-    submitButton.disabled = true; // End game
+    submitButton.disabled = true;
+    // Celebrate!
+    triggerGreenFlash();
+    triggerConfetti();
   } else if (remaining > 0) {
     result.textContent = `Nope, not "${guess}". Try again!`;
     result.classList.add("wrong");
@@ -67,10 +56,33 @@ function submitGuess() {
     result.textContent = `Game over! It was ${idealAnswer}.`;
     result.classList.add("wrong");
     guessesLeft.textContent = "No guesses left.";
-    submitButton.disabled = true; // End game
+    submitButton.disabled = true;
   }
 
-  document.getElementById("guessInput").value = ""; // Clear input
+  document.getElementById("guessInput").value = "";
+}
+
+// Green flash effect
+function triggerGreenFlash() {
+  document.body.classList.add("green-flash");
+  setTimeout(() => {
+    document.body.classList.remove("green-flash");
+  }, 1000); // Flash for 1 second
+}
+
+// Confetti effect
+function triggerConfetti() {
+  // Dynamically load canvas-confetti
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+  script.onload = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
+  document.head.appendChild(script);
 }
 
 // Limit audio to 5 seconds
