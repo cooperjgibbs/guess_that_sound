@@ -214,7 +214,7 @@ function loadDailySound() {
     .then(data => {
       soundsData = data;
 
-      const startDate = new Date("2025-04-06");
+      const startDate = new Date("2025-04-11");
       const today = new Date();
       const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
       currentDayIndex = daysSinceStart % data.length;
