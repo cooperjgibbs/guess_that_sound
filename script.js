@@ -39,7 +39,7 @@ function submitGuess() {
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     document.body.classList.remove("wrong");
     document.body.classList.add("correct");
-    triggerCorrectEffect(); // Green fill + confetti
+    triggerCorrectEffect(); // Green fill + confetti + popup
     refreshDropdown();
     ensureDayButtonClickable();
   } else if (remaining > 0) {
@@ -58,6 +58,7 @@ function submitGuess() {
     addWrongOverlay();
     refreshDropdown();
     ensureDayButtonClickable();
+    setTimeout(() => showPopup(false), 500); // Popup after red overlay
   }
 
   document.getElementById("guessInput").value = "";
@@ -67,24 +68,25 @@ function addWrongOverlay() {
   const overlays = document.getElementById("wrongOverlays");
   const overlay = document.createElement("div");
   overlay.className = "wrong-overlay";
-  overlay.style.top = `${(guessCount - 1) * 20}%`; // Top-down
+  overlay.style.top = `${(guessCount - 1) * 20}%`;
   overlays.appendChild(overlay);
 }
 
 function triggerCorrectEffect() {
   triggerConfetti();
   const overlays = document.getElementById("wrongOverlays");
-  overlays.innerHTML = ""; // Clear red overlays
-  // Add 5 green overlays, animate bottom-up
+  overlays.innerHTML = "";
   for (let i = 0; i < 5; i++) {
     const overlay = document.createElement("div");
     overlay.className = "green-overlay";
-    overlay.style.bottom = `${i * 20}%`; // Bottom-up
+    overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 1000); // 200ms delay per segment
+    setTimeout(() => overlay.classList.add("active"), i * 200);
   }
-  // Clear green overlays after animation
-  setTimeout(() => overlays.innerHTML = "", 5000); // Matches 5 * 200ms
+  setTimeout(() => {
+    overlays.innerHTML = "";
+    showPopup(true); // Popup after green animation
+  }, 1000);
 }
 
 function triggerConfetti() {
@@ -94,6 +96,37 @@ function triggerConfetti() {
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
+}
+
+function showPopup(isCorrect) {
+  const popup = document.getElementById("popup");
+  const popupMessage = document.getElementById("popupMessage");
+  if (isCorrect) {
+    popupMessage.textContent = `Day ${currentDayIndex + 1}: Correct!\nYou got "${idealAnswer}" in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
+  } else {
+    popupMessage.textContent = `Day ${currentDayIndex + 1}: Game Over!\nThe answer was "${idealAnswer}".`;
+  }
+  popup.style.display = "flex";
+  setTimeout(() => popup.classList.add("active"), 10); // Trigger animation
+}
+
+function showCompletedPopup(dayIndex, status) {
+  const popup = document.getElementById("popup");
+  const popupMessage = document.getElementById("popupMessage");
+  const answer = soundsData[dayIndex].answer;
+  if (status > 0) {
+    popupMessage.textContent = `Day ${dayIndex + 1}: Correct!\nYou got "${answer}" in ${status} guess${status > 1 ? "es" : ""}!`;
+  } else {
+    popupMessage.textContent = `Day ${dayIndex + 1}: Game Over!\nThe answer was "${answer}".`;
+  }
+  popup.style.display = "flex";
+  setTimeout(() => popup.classList.add("active"), 10);
+}
+
+function closePopup() {
+  const popup = document.getElementById("popup");
+  popup.classList.remove("active");
+  setTimeout(() => popup.style.display = "none", 300); // Match transition
 }
 
 const audio = document.getElementById("soundClip");
@@ -161,6 +194,9 @@ function refreshDropdown() {
     const status = parseInt(localStorage.getItem(`soundHistory_day${index}`)) || 0;
     dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
     dayItem.onclick = () => {
+      if (status !== 0) {
+        showCompletedPopup(index, status); // Popup for completed days
+      }
       loadSound(index);
       document.getElementById("dayDropdown").style.display = "none";
     };
@@ -178,7 +214,7 @@ function loadDailySound() {
     .then(data => {
       soundsData = data;
 
-      const startDate = new Date("2025-04-11");
+      const startDate = new Date("2025-04-06");
       const today = new Date();
       const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
       currentDayIndex = daysSinceStart % data.length;
@@ -187,6 +223,7 @@ function loadDailySound() {
 
       refreshDropdown();
       ensureDayButtonClickable();
+      document.getElementById("popupClose").onclick = closePopup;
     })
     .catch(error => {
       console.error("Error loading sounds:", error);
@@ -200,6 +237,7 @@ function loadDailySound() {
       audio.load();
       dayButton.textContent = "Day 1";
       ensureDayButtonClickable();
+      document.getElementById("popupClose").onclick = closePopup;
     });
 }
 
