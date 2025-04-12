@@ -9,7 +9,6 @@
     font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, #e0eafc, #cfdef3);
@@ -95,7 +94,7 @@
     color: #2c3e50;
     font-size: 1rem;
     margin-bottom: 15px;
-    white-space: pre-wrap; /* Preserve newlines */
+    white-space: pre-wrap;
   }
   
   .popup-button {
@@ -171,7 +170,7 @@
     font-size: 0.85rem;
     border-radius: 20px;
     text-align: center;
-    transition: background 0.3s ease;
+    transition: background 0.2s ease;
   }
   
   /* History colors */
@@ -213,6 +212,7 @@
     max-width: 500px;
     position: relative;
     z-index: 10;
+    margin-bottom: 200px; /* Space for keyboard on mobile */
   }
   
   /* Guess display */
@@ -225,14 +225,31 @@
     border: 2px solid #dfe6e9;
     border-radius: 10px;
     text-align: center;
-    white-space: pre; /* Preserve spaces */
+    white-space: pre;
   }
   
   /* Keyboard */
   .keyboard {
-    margin: 1rem 0;
     width: 100%;
     max-width: 500px;
+    z-index: 10;
+  }
+  
+  @media (max-width: 600px) {
+    .keyboard {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #f5f5f5; /* Subtle background */
+      padding: 8px;
+    }
+  }
+  
+  @media (min-width: 601px) {
+    .keyboard {
+      margin: 1rem 0;
+    }
   }
   
   .keyboard-row {
@@ -247,19 +264,24 @@
     color: #2c3e50;
     border: none;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-transform: uppercase;
     cursor: pointer;
     transition: background 0.2s ease;
     flex: 1;
-    height: 58px;
-    max-width: 40px;
+    height: 50px;
+    max-width: 36px;
   }
   
   .key.wide {
     flex: 1.5;
-    max-width: 60px;
+    max-width: 54px;
+  }
+  
+  .key[data-key="Space"] {
+    text-transform: none;
+    font-size: 0.8rem;
   }
   
   .key:hover {
@@ -319,5 +341,6 @@
   @media (min-width: 600px) {
     .container {
       padding: 2rem;
+      margin-bottom: 20px; /* Less space on desktop */
     }
   }

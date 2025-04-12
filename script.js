@@ -80,12 +80,12 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 2000);
+    setTimeout(() => overlay.classList.add("active"), i * 5000);
   }
   setTimeout(() => {
     overlays.innerHTML = "";
     showPopup(true);
-  }, 2000);
+  }, 1000);
 }
 
 function triggerConfetti() {
@@ -140,8 +140,15 @@ function handleKeyPress(key) {
     updateGuessDisplay();
     return;
   }
-  if (key === " " || (key.length === 1 && /[a-zA-Z]/.test(key))) {
-    if (currentGuess.length < 20) { // Max length
+  if (key === "Space") {
+    if (currentGuess.length < 20) {
+      currentGuess.push(" ");
+      updateGuessDisplay();
+    }
+    return;
+  }
+  if (key.length === 1 && /[a-zA-Z]/.test(key)) {
+    if (currentGuess.length < 20) {
       currentGuess.push(key.toUpperCase());
       updateGuessDisplay();
     }
@@ -186,7 +193,7 @@ function resetGame() {
 }
 
 function loadSound(dayIndex) {
-  const sound = soundsData[dayIndex];
+  const woken = soundsData[dayIndex];
   if (!sound) return;
 
   audio.innerHTML = "";
@@ -272,7 +279,7 @@ function loadDailySound() {
       // Physical keyboard support
       document.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === "Backspace" || e.key === " " || /[a-zA-Z]/.test(e.key)) {
-          handleKeyPress(e.key);
+          handleKeyPress(e.key === " " ? "Space" : e.key);
         }
       });
     })
@@ -296,7 +303,7 @@ function loadDailySound() {
 
       document.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === "Backspace" || e.key === " " || /[a-zA-Z]/.test(e.key)) {
-          handleKeyPress(e.key);
+          handleKeyPress(e.key === " " ? "Space" : e.key);
         }
       });
     });
