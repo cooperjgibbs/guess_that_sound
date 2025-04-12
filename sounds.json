@@ -5,9 +5,9 @@
       "acceptable": ["dog barking", "barking", "dog", "bark", "puppy", "woof"]
     },
     {
-      "file": "sounds/day2.mp3",
-      "answer": "rain falling",
-      "acceptable": ["rain falling", "rain", "falling rain", "raindrops", "drizzle"]
+      "file": "sounds/day2.m4a",
+      "answer": "typing on a keyboard",
+      "acceptable": ["type", "typing", "keyboard", "key", "keys"]
     },
     {
       "file": "sounds/day3.m4a",
