@@ -81,18 +81,26 @@ function addWrongOverlay() {
 function triggerCorrectEffect() {
   triggerConfetti();
   const overlays = document.getElementById("wrongOverlays");
-  overlays.innerHTML = "";
+  const wrongOverlays = document.querySelectorAll(".wrong-overlay");
+  // Add green overlays, remove corresponding red
   for (let i = 0; i < 5; i++) {
-    const overlay = document.createElement("div");
-    overlay.className = "green-overlay";
-    overlay.style.bottom = `${i * 20}%`;
-    overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 1000);
+    const greenOverlay = document.createElement("div");
+    greenOverlay.className = "green-overlay";
+    greenOverlay.style.bottom = `${i * 20}%`; // Bottom-up
+    overlays.appendChild(greenOverlay);
+    setTimeout(() => {
+      greenOverlay.classList.add("active");
+      // Remove red overlay at corresponding position
+      const redIndex = wrongOverlays.length - 1 - i; // Map bottom to top
+      if (wrongOverlays[redIndex]) {
+        wrongOverlays[redIndex].remove();
+      }
+    }, i * 1000); // 1s per segment
   }
   setTimeout(() => {
-    overlays.innerHTML = "";
+    overlays.innerHTML = ""; // Clear all after 5s
     showPopup(true);
-  }, 2000);
+  }, 5000);
 }
 
 function triggerConfetti() {
@@ -209,9 +217,8 @@ function loadSound(dayIndex) {
   audio.innerHTML = "";
   const source = document.createElement("source");
   source.src = sound.file;
-  // Parse extension for MIME type
   const extension = sound.file.split('.').pop().toLowerCase();
-  source.type = audioFormats[extension] || "audio/mp4"; // Default to m4a
+  source.type = audioFormats[extension] || "audio/mp4";
   audio.appendChild(source);
   audio.load();
 

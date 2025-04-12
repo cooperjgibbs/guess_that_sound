@@ -13,7 +13,7 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #e0eafc, #cfdef3);
     padding: 10px;
-    transition: background 2s ease; /* Slower background change */
+    transition: background 2s ease;
   }
   
   body.correct {
@@ -40,14 +40,16 @@
     height: 20%;
     background: rgba(231, 76, 60, 0.7);
     transition: opacity 0.5s ease;
+    z-index: 6;
   }
   
   .green-overlay {
     width: 100%;
     height: 20%;
     background: rgba(39, 174, 96, 0.7);
-    transition: opacity 0.4s ease; /* Match slower animation */
+    transition: opacity 0.5s ease;
     opacity: 0;
+    z-index: 7; /* Above red */
   }
   
   .green-overlay.active {
