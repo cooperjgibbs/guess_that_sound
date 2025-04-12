@@ -37,6 +37,8 @@ function submitGuess() {
     guessesLeft.textContent = `You got it in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
     submitButton.disabled = true;
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
+    document.body.classList.remove("wrong");
+    document.body.classList.add("correct"); // Set persistent green
     triggerGreenFlash();
     triggerConfetti();
     ensureDayButtonClickable();
@@ -50,6 +52,8 @@ function submitGuess() {
     guessesLeft.textContent = "No guesses left.";
     submitButton.disabled = true;
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, -1);
+    document.body.classList.remove("correct");
+    document.body.classList.add("wrong"); // Set persistent red
     ensureDayButtonClickable();
   }
 
@@ -65,7 +69,7 @@ function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    confetti({ particleCount: 300, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
@@ -105,6 +109,15 @@ function loadSound(dayIndex) {
   currentDayIndex = dayIndex;
   document.getElementById("dayButton").textContent = `Day ${dayIndex + 1}`;
   resetGame();
+
+  // Set page background based on history
+  const status = parseInt(localStorage.getItem(`soundHistory_day${dayIndex}`)) || 0;
+  document.body.classList.remove("correct", "wrong");
+  if (status > 0) {
+    document.body.classList.add("correct"); // Green for completed correct
+  } else if (status === -1) {
+    document.body.classList.add("wrong"); // Red for completed wrong
+  }
   ensureDayButtonClickable();
 }
 
