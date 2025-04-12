@@ -35,10 +35,11 @@ function submitGuess() {
     result.textContent = `Good guess! It’s ${idealAnswer}.`;
     result.classList.add("correct");
     guessesLeft.textContent = `You got it in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
-    submitButton.disabled = true; // Only disable submit button
+    submitButton.disabled = true;
+    localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     triggerGreenFlash();
     triggerConfetti();
-    ensureDayButtonClickable(); // Ensure day button works post-win
+    ensureDayButtonClickable();
   } else if (remaining > 0) {
     result.textContent = `Nope, not "${guess}". Try again!`;
     result.classList.add("wrong");
@@ -48,7 +49,8 @@ function submitGuess() {
     result.classList.add("wrong");
     guessesLeft.textContent = "No guesses left.";
     submitButton.disabled = true;
-    ensureDayButtonClickable(); // Ensure day button works post-game over
+    localStorage.setItem(`soundHistory_day${currentDayIndex}`, -1);
+    ensureDayButtonClickable();
   }
 
   document.getElementById("guessInput").value = "";
@@ -63,7 +65,7 @@ function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
@@ -103,15 +105,14 @@ function loadSound(dayIndex) {
   currentDayIndex = dayIndex;
   document.getElementById("dayButton").textContent = `Day ${dayIndex + 1}`;
   resetGame();
-  ensureDayButtonClickable(); // Re-ensure clickable after load
+  ensureDayButtonClickable();
 }
 
 function ensureDayButtonClickable() {
   const dayButton = document.getElementById("dayButton");
   const dayDropdown = document.getElementById("dayDropdown");
-  dayButton.style.pointerEvents = "auto"; // Force clickable
+  dayButton.style.pointerEvents = "auto";
   dayButton.onclick = () => {
-    console.log("Day button clicked"); // Debug
     dayDropdown.style.display = dayDropdown.style.display === "none" ? "block" : "none";
   };
 }
@@ -126,7 +127,7 @@ function loadDailySound() {
     .then(data => {
       soundsData = data;
 
-      const startDate = new Date("2025-04-10");
+      const startDate = new Date("2025-04-11");
       const today = new Date();
       const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
       currentDayIndex = daysSinceStart % data.length;
@@ -137,6 +138,8 @@ function loadDailySound() {
       data.forEach((sound, index) => {
         const dayItem = document.createElement("div");
         dayItem.textContent = `Day ${index + 1}`;
+        const status = parseInt(localStorage.getItem(`soundHistory_day${index}`)) || 0;
+        dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
         dayItem.onclick = () => {
           loadSound(index);
           dayDropdown.style.display = "none";
@@ -144,7 +147,7 @@ function loadDailySound() {
         dayList.appendChild(dayItem);
       });
 
-      ensureDayButtonClickable(); // Set initial click handler
+      ensureDayButtonClickable();
     })
     .catch(error => {
       console.error("Error loading sounds:", error);
@@ -157,7 +160,7 @@ function loadDailySound() {
       audio.appendChild(source);
       audio.load();
       dayButton.textContent = "Day 1";
-      ensureDayButtonClickable(); // Ensure clickable in fallback
+      ensureDayButtonClickable();
     });
 }
 
