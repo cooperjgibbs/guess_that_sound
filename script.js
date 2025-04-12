@@ -81,19 +81,19 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 200);
+    setTimeout(() => overlay.classList.add("active"), i * 1000);
   }
   setTimeout(() => {
     overlays.innerHTML = "";
     showPopup(true); // Popup after green animation
-  }, 1000);
+  }, 5000);
 }
 
 function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
