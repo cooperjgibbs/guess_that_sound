@@ -38,7 +38,8 @@ function submitGuess() {
     submitButton.disabled = true;
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     document.body.classList.remove("wrong");
-    document.body.classList.add("correct"); // Set persistent green
+    document.body.classList.add("correct");
+    refreshDropdown(); // Update dropdown immediately
     triggerGreenFlash();
     triggerConfetti();
     ensureDayButtonClickable();
@@ -53,7 +54,8 @@ function submitGuess() {
     submitButton.disabled = true;
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, -1);
     document.body.classList.remove("correct");
-    document.body.classList.add("wrong"); // Set persistent red
+    document.body.classList.add("wrong");
+    refreshDropdown(); // Update dropdown immediately
     ensureDayButtonClickable();
   }
 
@@ -69,7 +71,7 @@ function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({ particleCount: 300, spread: 70, origin: { y: 0.6 } });
+    confetti({ particleCount: 250, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
@@ -110,13 +112,12 @@ function loadSound(dayIndex) {
   document.getElementById("dayButton").textContent = `Day ${dayIndex + 1}`;
   resetGame();
 
-  // Set page background based on history
   const status = parseInt(localStorage.getItem(`soundHistory_day${dayIndex}`)) || 0;
   document.body.classList.remove("correct", "wrong");
   if (status > 0) {
-    document.body.classList.add("correct"); // Green for completed correct
+    document.body.classList.add("correct");
   } else if (status === -1) {
-    document.body.classList.add("wrong"); // Red for completed wrong
+    document.body.classList.add("wrong");
   }
   ensureDayButtonClickable();
 }
@@ -128,6 +129,22 @@ function ensureDayButtonClickable() {
   dayButton.onclick = () => {
     dayDropdown.style.display = dayDropdown.style.display === "none" ? "block" : "none";
   };
+}
+
+function refreshDropdown() {
+  const dayList = document.getElementById("dayList");
+  dayList.innerHTML = "";
+  soundsData.forEach((sound, index) => {
+    const dayItem = document.createElement("div");
+    dayItem.textContent = `Day ${index + 1}`;
+    const status = parseInt(localStorage.getItem(`soundHistory_day${index}`)) || 0;
+    dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
+    dayItem.onclick = () => {
+      loadSound(index);
+      document.getElementById("dayDropdown").style.display = "none";
+    };
+    dayList.appendChild(dayItem);
+  });
 }
 
 function loadDailySound() {
@@ -147,19 +164,7 @@ function loadDailySound() {
 
       loadSound(currentDayIndex);
 
-      dayList.innerHTML = "";
-      data.forEach((sound, index) => {
-        const dayItem = document.createElement("div");
-        dayItem.textContent = `Day ${index + 1}`;
-        const status = parseInt(localStorage.getItem(`soundHistory_day${index}`)) || 0;
-        dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
-        dayItem.onclick = () => {
-          loadSound(index);
-          dayDropdown.style.display = "none";
-        };
-        dayList.appendChild(dayItem);
-      });
-
+      refreshDropdown(); // Initial population
       ensureDayButtonClickable();
     })
     .catch(error => {
