@@ -6,6 +6,13 @@ let soundsData = [];
 let currentDayIndex = 0;
 let currentGuess = [];
 
+// Map extensions to MIME types
+const audioFormats = {
+  mp3: "audio/mpeg",
+  m4a: "audio/mp4",
+  wav: "audio/wav"
+};
+
 function submitGuess() {
   const guess = currentGuess.join("").toLowerCase();
   const result = document.getElementById("result");
@@ -80,12 +87,12 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 400); // Slower: 400ms per segment
+    setTimeout(() => overlay.classList.add("active"), i * 1000);
   }
   setTimeout(() => {
     overlays.innerHTML = "";
     showPopup(true);
-  }, 2000); // Match 5 * 400ms
+  }, 2000);
 }
 
 function triggerConfetti() {
@@ -202,7 +209,9 @@ function loadSound(dayIndex) {
   audio.innerHTML = "";
   const source = document.createElement("source");
   source.src = sound.file;
-  source.type = "audio/mp3";
+  // Parse extension for MIME type
+  const extension = sound.file.split('.').pop().toLowerCase();
+  source.type = audioFormats[extension] || "audio/mp4"; // Default to m4a
   audio.appendChild(source);
   audio.load();
 
@@ -263,7 +272,7 @@ function loadDailySound() {
     .then(data => {
       soundsData = data;
 
-      const startDate = new Date("2025-04-11");
+      const startDate = new Date("2025-04-10");
       const today = new Date();
       const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
       currentDayIndex = daysSinceStart % data.length;
@@ -296,8 +305,8 @@ function loadDailySound() {
       acceptableAnswers = ["dog barking", "barking", "dog", "bark"];
       audio.innerHTML = "";
       const source = document.createElement("source");
-      source.src = "sounds/day1.mp3";
-      source.type = "audio/mp3";
+      source.src = "sounds/day1.m4a";
+      source.type = "audio/mp4";
       audio.appendChild(source);
       audio.load();
       dayButton.textContent = "Day 1";

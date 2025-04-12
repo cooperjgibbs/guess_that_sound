@@ -8,5 +8,10 @@
       "file": "sounds/day2.mp3",
       "answer": "rain falling",
       "acceptable": ["rain falling", "rain", "falling rain", "raindrops", "drizzle"]
+    },
+    {
+      "file": "sounds/day3.m4a",
+      "answer": "running water",
+      "acceptable": ["water", "faucet", "sink", "tap", "flow", "drip", "stream"]
     }
   ]
