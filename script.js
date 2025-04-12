@@ -4,12 +4,12 @@ let idealAnswer = "";
 let acceptableAnswers = [];
 let soundsData = [];
 let currentDayIndex = 0;
+let currentGuess = [];
 
 function submitGuess() {
-  const guess = document.getElementById("guessInput").value.trim().toLowerCase();
+  const guess = currentGuess.join("").toLowerCase();
   const result = document.getElementById("result");
   const guessesLeft = document.getElementById("guessesLeft");
-  const submitButton = document.querySelector("button[type='submit']");
 
   guessCount++;
   const remaining = maxGuesses - guessCount;
@@ -35,33 +35,32 @@ function submitGuess() {
     result.textContent = `Good guess! It’s ${idealAnswer}.`;
     result.classList.add("correct");
     guessesLeft.textContent = `You got it in ${guessCount} guess${guessCount > 1 ? "es" : ""}!`;
-    submitButton.disabled = true;
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     document.body.classList.remove("wrong");
     document.body.classList.add("correct");
-    triggerCorrectEffect(); // Green fill + confetti + popup
+    triggerCorrectEffect();
     refreshDropdown();
     ensureDayButtonClickable();
+    disableKeyboard();
   } else if (remaining > 0) {
     result.textContent = `Nope, not "${guess}". Try again!`;
     result.classList.add("wrong");
     guessesLeft.textContent = `Guesses remaining: ${remaining}`;
     addWrongOverlay();
+    clearGuess();
   } else {
     result.textContent = `Game over! It was ${idealAnswer}.`;
     result.classList.add("wrong");
     guessesLeft.textContent = "No guesses left.";
-    submitButton.disabled = true;
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, -1);
     document.body.classList.remove("correct");
     document.body.classList.add("wrong");
     addWrongOverlay();
     refreshDropdown();
     ensureDayButtonClickable();
-    setTimeout(() => showPopup(false), 500); // Popup after red overlay
+    disableKeyboard();
+    setTimeout(() => showPopup(false), 500);
   }
-
-  document.getElementById("guessInput").value = "";
 }
 
 function addWrongOverlay() {
@@ -81,19 +80,19 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 3000);
+    setTimeout(() => overlay.classList.add("active"), i * 2000);
   }
   setTimeout(() => {
     overlays.innerHTML = "";
-    showPopup(true); // Popup after green animation
-  }, 15000);
+    showPopup(true);
+  }, 2000);
 }
 
 function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
@@ -107,7 +106,7 @@ function showPopup(isCorrect) {
     popupMessage.textContent = `Day ${currentDayIndex + 1}: Game Over!\nThe answer was "${idealAnswer}".`;
   }
   popup.style.display = "flex";
-  setTimeout(() => popup.classList.add("active"), 10); // Trigger animation
+  setTimeout(() => popup.classList.add("active"), 10);
 }
 
 function showCompletedPopup(dayIndex, status) {
@@ -126,7 +125,44 @@ function showCompletedPopup(dayIndex, status) {
 function closePopup() {
   const popup = document.getElementById("popup");
   popup.classList.remove("active");
-  setTimeout(() => popup.style.display = "none", 300); // Match transition
+  setTimeout(() => popup.style.display = "none", 300);
+}
+
+function handleKeyPress(key) {
+  if (key === "Enter") {
+    if (currentGuess.length > 0) {
+      submitGuess();
+    }
+    return;
+  }
+  if (key === "Backspace") {
+    currentGuess.pop();
+    updateGuessDisplay();
+    return;
+  }
+  if (key === " " || (key.length === 1 && /[a-zA-Z]/.test(key))) {
+    if (currentGuess.length < 20) { // Max length
+      currentGuess.push(key.toUpperCase());
+      updateGuessDisplay();
+    }
+  }
+}
+
+function updateGuessDisplay() {
+  document.getElementById("guessDisplay").textContent = currentGuess.join("") || " ";
+}
+
+function clearGuess() {
+  currentGuess = [];
+  updateGuessDisplay();
+}
+
+function disableKeyboard() {
+  document.querySelectorAll(".key").forEach(key => key.disabled = true);
+}
+
+function enableKeyboard() {
+  document.querySelectorAll(".key").forEach(key => key.disabled = false);
 }
 
 const audio = document.getElementById("soundClip");
@@ -139,13 +175,14 @@ audio.addEventListener("timeupdate", () => {
 
 function resetGame() {
   guessCount = 0;
+  currentGuess = [];
   document.getElementById("guessesLeft").textContent = `Guesses remaining: ${maxGuesses}`;
   document.getElementById("result").textContent = "";
   document.getElementById("result").classList.remove("correct", "wrong");
-  document.querySelector("button[type='submit']").disabled = false;
-  document.getElementById("guessInput").value = "";
+  updateGuessDisplay();
   audio.currentTime = 0;
   document.getElementById("wrongOverlays").innerHTML = "";
+  enableKeyboard();
 }
 
 function loadSound(dayIndex) {
@@ -170,8 +207,10 @@ function loadSound(dayIndex) {
   document.body.classList.remove("correct", "wrong");
   if (status > 0) {
     document.body.classList.add("correct");
+    disableKeyboard();
   } else if (status === -1) {
     document.body.classList.add("wrong");
+    disableKeyboard();
   }
   ensureDayButtonClickable();
 }
@@ -195,7 +234,7 @@ function refreshDropdown() {
     dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
     dayItem.onclick = () => {
       if (status !== 0) {
-        showCompletedPopup(index, status); // Popup for completed days
+        showCompletedPopup(index, status);
       }
       loadSound(index);
       document.getElementById("dayDropdown").style.display = "none";
@@ -224,6 +263,18 @@ function loadDailySound() {
       refreshDropdown();
       ensureDayButtonClickable();
       document.getElementById("popupClose").onclick = closePopup;
+
+      // Keyboard click handlers
+      document.querySelectorAll(".key").forEach(key => {
+        key.onclick = () => handleKeyPress(key.dataset.key || key.textContent);
+      });
+
+      // Physical keyboard support
+      document.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === "Backspace" || e.key === " " || /[a-zA-Z]/.test(e.key)) {
+          handleKeyPress(e.key);
+        }
+      });
     })
     .catch(error => {
       console.error("Error loading sounds:", error);
@@ -238,6 +289,16 @@ function loadDailySound() {
       dayButton.textContent = "Day 1";
       ensureDayButtonClickable();
       document.getElementById("popupClose").onclick = closePopup;
+
+      document.querySelectorAll(".key").forEach(key => {
+        key.onclick = () => handleKeyPress(key.dataset.key || key.textContent);
+      });
+
+      document.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === "Backspace" || e.key === " " || /[a-zA-Z]/.test(e.key)) {
+          handleKeyPress(e.key);
+        }
+      });
     });
 }
 
