@@ -80,12 +80,12 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 5000);
+    setTimeout(() => overlay.classList.add("active"), i * 400); // Slower: 400ms per segment
   }
   setTimeout(() => {
     overlays.innerHTML = "";
     showPopup(true);
-  }, 1000);
+  }, 2000); // Match 5 * 400ms
 }
 
 function triggerConfetti() {
@@ -112,7 +112,7 @@ function showPopup(isCorrect) {
 function showCompletedPopup(dayIndex, status) {
   const popup = document.getElementById("popup");
   const popupMessage = document.getElementById("popupMessage");
-  const answer = soundsData[dayIndex].answer;
+  const answer = soundsData[dayIndex]?.answer || "Unknown";
   if (status > 0) {
     popupMessage.textContent = `Day ${dayIndex + 1}: Correct!\nYou got "${answer}" in ${status} guess${status > 1 ? "es" : ""}!`;
   } else {
@@ -194,7 +194,10 @@ function resetGame() {
 
 function loadSound(dayIndex) {
   const sound = soundsData[dayIndex];
-  if (!sound) return;
+  if (!sound) {
+    console.error(`No sound data for day ${dayIndex}`);
+    return;
+  }
 
   audio.innerHTML = "";
   const source = document.createElement("source");
@@ -270,6 +273,10 @@ function loadDailySound() {
       refreshDropdown();
       ensureDayButtonClickable();
       document.getElementById("popupClose").onclick = closePopup;
+      document.getElementById("viewDays").onclick = () => {
+        closePopup();
+        document.getElementById("dayDropdown").style.display = "block";
+      };
 
       // Keyboard click handlers
       document.querySelectorAll(".key").forEach(key => {
@@ -296,6 +303,10 @@ function loadDailySound() {
       dayButton.textContent = "Day 1";
       ensureDayButtonClickable();
       document.getElementById("popupClose").onclick = closePopup;
+      document.getElementById("viewDays").onclick = () => {
+        closePopup();
+        document.getElementById("dayDropdown").style.display = "block";
+      };
 
       document.querySelectorAll(".key").forEach(key => {
         key.onclick = () => handleKeyPress(key.dataset.key || key.textContent);
