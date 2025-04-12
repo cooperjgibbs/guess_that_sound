@@ -81,10 +81,10 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`; // Bottom-up
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 200); // 200ms delay per segment
+    setTimeout(() => overlay.classList.add("active"), i * 1000); // 200ms delay per segment
   }
   // Clear green overlays after animation
-  setTimeout(() => overlays.innerHTML = "", 1000); // Matches 5 * 200ms
+  setTimeout(() => overlays.innerHTML = "", 5000); // Matches 5 * 200ms
 }
 
 function triggerConfetti() {
