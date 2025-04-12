@@ -39,15 +39,14 @@ function submitGuess() {
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     document.body.classList.remove("wrong");
     document.body.classList.add("correct");
-    clearWrongOverlays(); // Clear red overlays
-    triggerCorrectEffect(); // Confetti + green screen
+    triggerCorrectEffect(); // Green fill + confetti
     refreshDropdown();
     ensureDayButtonClickable();
   } else if (remaining > 0) {
     result.textContent = `Nope, not "${guess}". Try again!`;
     result.classList.add("wrong");
     guessesLeft.textContent = `Guesses remaining: ${remaining}`;
-    addWrongOverlay(); // Add 1/5 red overlay
+    addWrongOverlay();
   } else {
     result.textContent = `Game over! It was ${idealAnswer}.`;
     result.classList.add("wrong");
@@ -56,7 +55,7 @@ function submitGuess() {
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, -1);
     document.body.classList.remove("correct");
     document.body.classList.add("wrong");
-    addWrongOverlay(); // Final overlay (5/5)
+    addWrongOverlay();
     refreshDropdown();
     ensureDayButtonClickable();
   }
@@ -68,19 +67,24 @@ function addWrongOverlay() {
   const overlays = document.getElementById("wrongOverlays");
   const overlay = document.createElement("div");
   overlay.className = "wrong-overlay";
-  overlay.style.top = `${(guessCount - 1) * 20}%`; // Stack from top
+  overlay.style.top = `${(guessCount - 1) * 20}%`; // Top-down
   overlays.appendChild(overlay);
-}
-
-function clearWrongOverlays() {
-  const overlays = document.getElementById("wrongOverlays");
-  overlays.innerHTML = "";
 }
 
 function triggerCorrectEffect() {
   triggerConfetti();
-  document.body.classList.add("green-flash");
-  setTimeout(() => document.body.classList.remove("green-flash"), 1000);
+  const overlays = document.getElementById("wrongOverlays");
+  overlays.innerHTML = ""; // Clear red overlays
+  // Add 5 green overlays, animate bottom-up
+  for (let i = 0; i < 5; i++) {
+    const overlay = document.createElement("div");
+    overlay.className = "green-overlay";
+    overlay.style.bottom = `${i * 20}%`; // Bottom-up
+    overlays.appendChild(overlay);
+    setTimeout(() => overlay.classList.add("active"), i * 200); // 200ms delay per segment
+  }
+  // Clear green overlays after animation
+  setTimeout(() => overlays.innerHTML = "", 1000); // Matches 5 * 200ms
 }
 
 function triggerConfetti() {
@@ -108,7 +112,7 @@ function resetGame() {
   document.querySelector("button[type='submit']").disabled = false;
   document.getElementById("guessInput").value = "";
   audio.currentTime = 0;
-  clearWrongOverlays(); // Clear red overlays
+  document.getElementById("wrongOverlays").innerHTML = "";
 }
 
 function loadSound(dayIndex) {

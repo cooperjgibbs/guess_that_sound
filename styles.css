@@ -17,10 +17,6 @@
     transition: background 0.5s ease;
   }
   
-  body.green-flash {
-    background: #27ae60 !important; /* 1-second green for correct */
-  }
-  
   body.correct {
     background: #27ae60; /* Persistent */
   }
@@ -29,22 +25,34 @@
     background: #e74c3c; /* Persistent */
   }
   
-  /* Wrong overlays */
+  /* Overlays */
   #wrongOverlays {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Allow clicks through */
-    z-index: 5; /* Below container but above body */
+    pointer-events: none;
+    z-index: 5;
   }
   
   .wrong-overlay {
     width: 100%;
-    height: 20%; /* 1/5 of screen */
-    background: rgba(231, 76, 60, 0.7); /* Semi-transparent red */
-    transition: opacity 0.5s ease; /* Smooth fade-in */
+    height: 20%;
+    background: rgba(231, 76, 60, 0.7);
+    transition: opacity 0.5s ease;
+  }
+  
+  .green-overlay {
+    width: 100%;
+    height: 20%;
+    background: rgba(39, 174, 96, 0.7); /* Green, semi-transparent */
+    transition: opacity 0.5s ease;
+    opacity: 0; /* Start hidden for animation */
+  }
+  
+  .green-overlay.active {
+    opacity: 1; /* Fade in when active */
   }
   
   /* Header for buttons */
