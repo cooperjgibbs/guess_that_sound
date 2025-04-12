@@ -39,14 +39,15 @@ function submitGuess() {
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     document.body.classList.remove("wrong");
     document.body.classList.add("correct");
-    refreshDropdown(); // Update dropdown immediately
-    triggerGreenFlash();
-    triggerConfetti();
+    clearWrongOverlays(); // Clear red overlays
+    triggerCorrectEffect(); // Confetti + green screen
+    refreshDropdown();
     ensureDayButtonClickable();
   } else if (remaining > 0) {
     result.textContent = `Nope, not "${guess}". Try again!`;
     result.classList.add("wrong");
     guessesLeft.textContent = `Guesses remaining: ${remaining}`;
+    addWrongOverlay(); // Add 1/5 red overlay
   } else {
     result.textContent = `Game over! It was ${idealAnswer}.`;
     result.classList.add("wrong");
@@ -55,14 +56,29 @@ function submitGuess() {
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, -1);
     document.body.classList.remove("correct");
     document.body.classList.add("wrong");
-    refreshDropdown(); // Update dropdown immediately
+    addWrongOverlay(); // Final overlay (5/5)
+    refreshDropdown();
     ensureDayButtonClickable();
   }
 
   document.getElementById("guessInput").value = "";
 }
 
-function triggerGreenFlash() {
+function addWrongOverlay() {
+  const overlays = document.getElementById("wrongOverlays");
+  const overlay = document.createElement("div");
+  overlay.className = "wrong-overlay";
+  overlay.style.top = `${(guessCount - 1) * 20}%`; // Stack from top
+  overlays.appendChild(overlay);
+}
+
+function clearWrongOverlays() {
+  const overlays = document.getElementById("wrongOverlays");
+  overlays.innerHTML = "";
+}
+
+function triggerCorrectEffect() {
+  triggerConfetti();
   document.body.classList.add("green-flash");
   setTimeout(() => document.body.classList.remove("green-flash"), 1000);
 }
@@ -71,7 +87,7 @@ function triggerConfetti() {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
   script.onload = () => {
-    confetti({ particleCount: 250, spread: 70, origin: { y: 0.6 } });
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
   document.head.appendChild(script);
 }
@@ -92,6 +108,7 @@ function resetGame() {
   document.querySelector("button[type='submit']").disabled = false;
   document.getElementById("guessInput").value = "";
   audio.currentTime = 0;
+  clearWrongOverlays(); // Clear red overlays
 }
 
 function loadSound(dayIndex) {
@@ -164,7 +181,7 @@ function loadDailySound() {
 
       loadSound(currentDayIndex);
 
-      refreshDropdown(); // Initial population
+      refreshDropdown();
       ensureDayButtonClickable();
     })
     .catch(error => {
