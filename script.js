@@ -193,7 +193,7 @@ function resetGame() {
 }
 
 function loadSound(dayIndex) {
-  const woken = soundsData[dayIndex];
+  const sound = soundsData[dayIndex];
   if (!sound) return;
 
   audio.innerHTML = "";
