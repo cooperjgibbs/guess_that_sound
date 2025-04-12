@@ -81,12 +81,12 @@ function triggerCorrectEffect() {
     overlay.className = "green-overlay";
     overlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(overlay);
-    setTimeout(() => overlay.classList.add("active"), i * 1000);
+    setTimeout(() => overlay.classList.add("active"), i * 3000);
   }
   setTimeout(() => {
     overlays.innerHTML = "";
     showPopup(true); // Popup after green animation
-  }, 5000);
+  }, 15000);
 }
 
 function triggerConfetti() {
