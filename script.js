@@ -82,25 +82,23 @@ function triggerCorrectEffect() {
   triggerConfetti();
   const overlays = document.getElementById("wrongOverlays");
   const wrongOverlays = document.querySelectorAll(".wrong-overlay");
-  // Add green overlays, remove corresponding red
   for (let i = 0; i < 5; i++) {
     const greenOverlay = document.createElement("div");
     greenOverlay.className = "green-overlay";
-    greenOverlay.style.bottom = `${i * 20}%`; // Bottom-up
+    greenOverlay.style.bottom = `${i * 20}%`;
     overlays.appendChild(greenOverlay);
     setTimeout(() => {
       greenOverlay.classList.add("active");
-      // Remove red overlay at corresponding position
-      const redIndex = wrongOverlays.length - 1 - i; // Map bottom to top
+      const redIndex = wrongOverlays.length - 1 - i;
       if (wrongOverlays[redIndex]) {
         wrongOverlays[redIndex].remove();
       }
-    }, i * 1000); // 1s per segment
+    }, i * 1000);
   }
   setTimeout(() => {
-    overlays.innerHTML = ""; // Clear all after 5s
+    overlays.innerHTML = "";
     showPopup(true);
-  }, 5000);
+  }, 1000);
 }
 
 function triggerConfetti() {
@@ -181,10 +179,12 @@ function clearGuess() {
 
 function disableKeyboard() {
   document.querySelectorAll(".key").forEach(key => key.disabled = true);
+  document.getElementById("enterButton").disabled = true;
 }
 
 function enableKeyboard() {
   document.querySelectorAll(".key").forEach(key => key.disabled = false);
+  document.getElementById("enterButton").disabled = false;
 }
 
 const audio = document.getElementById("soundClip");
@@ -294,6 +294,13 @@ function loadDailySound() {
         document.getElementById("dayDropdown").style.display = "block";
       };
 
+      // Enter button handler
+      document.getElementById("enterButton").onclick = () => {
+        if (currentGuess.length > 0) {
+          submitGuess();
+        }
+      };
+
       // Keyboard click handlers
       document.querySelectorAll(".key").forEach(key => {
         key.onclick = () => handleKeyPress(key.dataset.key || key.textContent);
@@ -322,6 +329,12 @@ function loadDailySound() {
       document.getElementById("viewDays").onclick = () => {
         closePopup();
         document.getElementById("dayDropdown").style.display = "block";
+      };
+
+      document.getElementById("enterButton").onclick = () => {
+        if (currentGuess.length > 0) {
+          submitGuess();
+        }
       };
 
       document.querySelectorAll(".key").forEach(key => {

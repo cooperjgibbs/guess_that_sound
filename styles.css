@@ -49,7 +49,7 @@
     background: rgba(39, 174, 96, 0.7);
     transition: opacity 0.5s ease;
     opacity: 0;
-    z-index: 7; /* Above red */
+    z-index: 7;
   }
   
   .green-overlay.active {
@@ -218,17 +218,47 @@
     margin-bottom: 200px;
   }
   
+  /* Guess area */
+  .guess-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  
   /* Guess display */
   .guess-display {
+    flex: 1;
     min-height: 40px;
     font-size: 1.2rem;
     color: #2c3e50;
-    margin-bottom: 1rem;
     padding: 10px;
     border: 2px solid #dfe6e9;
     border-radius: 10px;
     text-align: center;
     white-space: pre;
+  }
+  
+  /* Enter button */
+  .enter-button {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    background: #0984e3;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+  
+  .enter-button:hover {
+    background: #0652dd;
+  }
+  
+  .enter-button:disabled {
+    background: #b0bec5;
+    cursor: not-allowed;
   }
   
   /* Keyboard */
