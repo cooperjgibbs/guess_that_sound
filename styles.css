@@ -238,7 +238,7 @@
     text-align: center;
     white-space: pre;
     position: relative;
-    outline: none;
+    pointer-events: none; /* Prevent interaction */
   }
   
   .guess-display:empty::before {
@@ -250,11 +250,24 @@
     pointer-events: none;
   }
   
+  .guess-display:empty::after {
+    content: "|";
+    color: #2c3e50;
+    animation: blink 1s step-end infinite;
+    margin-left: 5px;
+  }
+  
   .guess-display:not(:empty)::after {
     content: "|";
     color: #2c3e50;
     animation: blink 1s step-end infinite;
     margin-left: 2px;
+  }
+  
+  /* Prevent cursor when disabled */
+  body.correct .guess-display::after,
+  body.wrong .guess-display::after {
+    content: none;
   }
   
   @keyframes blink {
@@ -327,7 +340,7 @@
     flex: 1;
     height: 50px;
     max-width: 36px;
-    touch-action: manipulation; /* Prevent zoom */
+    touch-action: manipulation;
   }
   
   .key.wide {
