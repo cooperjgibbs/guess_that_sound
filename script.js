@@ -169,7 +169,8 @@ function handleKeyPress(key) {
 }
 
 function updateGuessDisplay() {
-  document.getElementById("guessDisplay").textContent = currentGuess.join("") || " ";
+  const guessDisplay = document.getElementById("guessDisplay");
+  guessDisplay.textContent = currentGuess.join("") || "";
 }
 
 function clearGuess() {
@@ -180,11 +181,13 @@ function clearGuess() {
 function disableKeyboard() {
   document.querySelectorAll(".key").forEach(key => key.disabled = true);
   document.getElementById("enterButton").disabled = true;
+  document.getElementById("guessDisplay").contentEditable = false;
 }
 
 function enableKeyboard() {
   document.querySelectorAll(".key").forEach(key => key.disabled = false);
   document.getElementById("enterButton").disabled = false;
+  document.getElementById("guessDisplay").contentEditable = true;
 }
 
 const audio = document.getElementById("soundClip");
@@ -228,6 +231,7 @@ function loadSound(dayIndex) {
   currentDayIndex = dayIndex;
   document.getElementById("dayButton").textContent = `Day ${dayIndex + 1}`;
   resetGame();
+  document.getElementById("guessDisplay").focus(); // Auto-focus
 
   const status = parseInt(localStorage.getItem(`soundHistory_day${dayIndex}`)) || 0;
   document.body.classList.remove("correct", "wrong");
@@ -273,6 +277,30 @@ function loadDailySound() {
   const dayButton = document.getElementById("dayButton");
   const dayDropdown = document.getElementById("dayDropdown");
   const dayList = document.getElementById("dayList");
+  const guessDisplay = document.getElementById("guessDisplay");
+
+  // Prevent native typing in contenteditable
+  guessDisplay.addEventListener("input", (e) => {
+    e.preventDefault();
+    guessDisplay.textContent = currentGuess.join("") || "";
+  });
+  guessDisplay.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (currentGuess.length > 0) {
+        submitGuess();
+      }
+    } else if (e.key === "Backspace") {
+      e.preventDefault();
+      handleKeyPress("Backspace");
+    } else if (e.key === " ") {
+      e.preventDefault();
+      handleKeyPress("Space");
+    } else if (/[a-zA-Z]/.test(e.key)) {
+      e.preventDefault();
+      handleKeyPress(e.key);
+    }
+  });
 
   fetch("sounds.json")
     .then(response => response.json())
@@ -336,6 +364,28 @@ function loadDailySound() {
           submitGuess();
         }
       };
+
+      guessDisplay.addEventListener("input", (e) => {
+        e.preventDefault();
+        guessDisplay.textContent = currentGuess.join("") || "";
+      });
+      guessDisplay.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (currentGuess.length > 0) {
+            submitGuess();
+          }
+        } else if (e.key === "Backspace") {
+          e.preventDefault();
+          handleKeyPress("Backspace");
+        } else if (e.key === " ") {
+          e.preventDefault();
+          handleKeyPress("Space");
+        } else if (/[a-zA-Z]/.test(e.key)) {
+          e.preventDefault();
+          handleKeyPress(e.key);
+        }
+      });
 
       document.querySelectorAll(".key").forEach(key => {
         key.onclick = () => handleKeyPress(key.dataset.key || key.textContent);

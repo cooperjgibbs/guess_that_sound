@@ -237,13 +237,35 @@
     border-radius: 10px;
     text-align: center;
     white-space: pre;
+    position: relative;
+    outline: none;
+  }
+  
+  .guess-display:empty::before {
+    content: attr(data-placeholder);
+    color: #7f8c8d;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  
+  .guess-display:not(:empty)::after {
+    content: "|";
+    color: #2c3e50;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+  
+  @keyframes blink {
+    50% { opacity: 0; }
   }
   
   /* Enter button */
   .enter-button {
     padding: 8px 20px;
     font-size: 0.9rem;
-    background: #0984e3;
+    background: #27ae60;
     color: white;
     border: none;
     border-radius: 10px;
@@ -253,7 +275,7 @@
   }
   
   .enter-button:hover {
-    background: #0652dd;
+    background: #219653;
   }
   
   .enter-button:disabled {
@@ -301,10 +323,11 @@
     font-weight: 500;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.3s ease;
     flex: 1;
     height: 50px;
     max-width: 36px;
+    touch-action: manipulation; /* Prevent zoom */
   }
   
   .key.wide {
