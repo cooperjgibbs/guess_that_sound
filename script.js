@@ -45,6 +45,7 @@ function submitGuess() {
     localStorage.setItem(`soundHistory_day${currentDayIndex}`, guessCount);
     document.body.classList.remove("wrong");
     document.body.classList.add("correct");
+    updateBadges(true);
     triggerCorrectEffect();
     refreshDropdown();
     ensureDayButtonClickable();
@@ -54,6 +55,7 @@ function submitGuess() {
     result.classList.add("wrong");
     guessesLeft.textContent = `Guesses remaining: ${remaining}`;
     addWrongOverlay();
+    updateBadges(false);
     clearGuess();
   } else {
     result.textContent = `Game over! It was ${idealAnswer}.`;
@@ -63,6 +65,7 @@ function submitGuess() {
     document.body.classList.remove("correct");
     document.body.classList.add("wrong");
     addWrongOverlay();
+    updateBadges(false);
     refreshDropdown();
     ensureDayButtonClickable();
     disableKeyboard();
@@ -76,6 +79,22 @@ function addWrongOverlay() {
   overlay.className = "wrong-overlay";
   overlay.style.top = `${(guessCount - 1) * 20}%`;
   overlays.appendChild(overlay);
+}
+
+function updateBadges(isCorrect) {
+  const badges = document.querySelectorAll(".badge");
+  if (isCorrect) {
+    badges.forEach(badge => badge.classList.add("correct"));
+  } else {
+    if (guessCount <= maxGuesses) {
+      badges[guessCount - 1].classList.add("wrong");
+    }
+  }
+}
+
+function resetBadges() {
+  const badges = document.querySelectorAll(".badge");
+  badges.forEach(badge => badge.classList.remove("wrong", "correct"));
 }
 
 function triggerCorrectEffect() {
@@ -205,6 +224,7 @@ function resetGame() {
   updateGuessDisplay();
   audio.currentTime = 0;
   document.getElementById("wrongOverlays").innerHTML = "";
+  resetBadges();
   enableKeyboard();
 }
 
@@ -234,9 +254,13 @@ function loadSound(dayIndex) {
   document.body.classList.remove("correct", "wrong");
   if (status > 0) {
     document.body.classList.add("correct");
+    updateBadges(true);
     disableKeyboard();
   } else if (status === -1) {
     document.body.classList.add("wrong");
+    for (let i = 0; i < maxGuesses; i++) {
+      document.querySelectorAll(".badge")[i].classList.add("wrong");
+    }
     disableKeyboard();
   }
   ensureDayButtonClickable();

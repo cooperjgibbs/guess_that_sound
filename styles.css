@@ -218,6 +218,30 @@
     margin-bottom: 200px;
   }
   
+  /* Badges */
+  .badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .badge {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #dfe6e9;
+    transition: background 0.3s ease;
+  }
+  
+  .badge.wrong {
+    background: #e74c3c;
+  }
+  
+  .badge.correct {
+    background: #27ae60;
+  }
+  
   /* Guess area */
   .guess-area {
     display: flex;
@@ -238,7 +262,7 @@
     text-align: center;
     white-space: pre;
     position: relative;
-    pointer-events: none; /* Prevent interaction */
+    pointer-events: none;
   }
   
   .guess-display:empty::before {
