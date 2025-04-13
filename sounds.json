@@ -18,5 +18,15 @@
       "file": "sounds/day4.m4a",
       "answer": "zipping",
       "acceptable": ["zip", "zipping", "unzip"]
+    },
+    {
+      "file": "sounds/day5.m4a",
+      "answer": "seatbelt",
+      "acceptable": ["seatbelt", "seat", "belt"]
+    },
+    {
+      "file": "sounds/day6.m4a",
+      "answer": "snapping",
+      "acceptable": ["snap", "snapping"]
     }
   ]
