@@ -13,5 +13,10 @@
       "file": "sounds/day3.m4a",
       "answer": "running water",
       "acceptable": ["water", "faucet", "sink", "tap", "flow", "drip", "stream"]
+    },
+    {
+      "file": "sounds/day4.m4a",
+      "answer": "zipping",
+      "acceptable": ["zip", "zipping", "unzip"]
     }
   ]
