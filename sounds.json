@@ -28,5 +28,10 @@
       "file": "sounds/day6.m4a",
       "answer": "snapping",
       "acceptable": ["snap", "snapping"]
+    },
+    {
+      "file": "sounds/day7.m4a",
+      "answer": "light switch",
+      "acceptable": ["light", "switch", "lightswitch", "light switch"]
     }
   ]
