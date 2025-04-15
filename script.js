@@ -117,7 +117,7 @@ function triggerCorrectEffect() {
   setTimeout(() => {
     overlays.innerHTML = "";
     showPopup(true);
-  }, 1000);
+  }, 5000);
 }
 
 function triggerConfetti() {
@@ -279,18 +279,20 @@ function refreshDropdown() {
   const dayList = document.getElementById("dayList");
   dayList.innerHTML = "";
   soundsData.forEach((sound, index) => {
-    const dayItem = document.createElement("div");
-    dayItem.textContent = `Day ${index + 1}`;
-    const status = parseInt(localStorage.getItem(`soundHistory_day${index}`)) || 0;
-    dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
-    dayItem.onclick = () => {
-      if (status !== 0) {
-        showCompletedPopup(index, status);
-      }
-      loadSound(index);
-      document.getElementById("dayDropdown").style.display = "none";
-    };
-    dayList.appendChild(dayItem);
+    if (index <= currentDayIndex) {
+      const dayItem = document.createElement("div");
+      dayItem.textContent = `Day ${index + 1}`;
+      const status = parseInt(localStorage.getItem(`soundHistory_day${index}`)) || 0;
+      dayItem.className = status === -1 ? "wrong" : status > 0 ? "correct" : "not-played";
+      dayItem.onclick = () => {
+        if (status !== 0) {
+          showCompletedPopup(index, status);
+        }
+        loadSound(index);
+        document.getElementById("dayDropdown").style.display = "none";
+      };
+      dayList.appendChild(dayItem);
+    }
   });
 }
 
@@ -307,7 +309,7 @@ function loadDailySound() {
       const startDate = new Date("2025-04-09");
       const today = new Date();
       const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-      currentDayIndex = daysSinceStart % data.length;
+      currentDayIndex = Math.min(daysSinceStart, soundsData.length - 1);
 
       loadSound(currentDayIndex);
 
